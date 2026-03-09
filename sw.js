@@ -1,5 +1,9 @@
 ﻿const CACHE_NAME = 'legionwiki-offline-v1';
-const PRECACHE_URLS = [
+
+    param($match)
+    $arr = $match.Groups[1].Value
+    # prefix every string entry that starts with "/" and not already prefixed
+    $arr2 = [regex]::Replace($arr,'"/(?!legionwiki-offline/)([^"]*)"', '"/legionwiki-offline/[
     "/_redirects",
     "/favicon.png",
     "/fonts\\Rajdhani\\Rajdhani.woff2",
@@ -779,7 +783,9 @@ const PRECACHE_URLS = [
     "/units\\leguwmstore\\index.html",
     "/units\\leg-vehicle-plant\\index.html",
     "/units\\legwin\\index.html"
-];
+]"')
+    "const PRECACHE_URLS = $arr2;"
+  
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -805,7 +811,8 @@ self.addEventListener('fetch', event => {
         const copy = resp.clone();
         caches.open(CACHE_NAME).then(c => c.put(event.request, copy));
         return resp;
-      }).catch(() => caches.match('/index.html'));
+      }).catch(() => caches.match('/legionwiki-offline/index.html'));
     })
   );
 });
+
